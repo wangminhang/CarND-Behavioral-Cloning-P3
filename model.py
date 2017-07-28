@@ -8,6 +8,8 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 
 from keras.models import Sequential
+from keras.callbacks import ModelCheckpoint
+
 from keras.layers import Flatten,Dense,Lambda,Dropout
 from keras.layers.convolutional import Convolution2D, Cropping2D,MaxPooling2D
 from sklearn.model_selection import train_test_split
@@ -46,7 +48,7 @@ def generator_center_camera(samples, batch_size = 32):
 def generator_multi_camera(samples, batch_size=32):
     file_path = "../P3_data/data/IMG/"
     num_samples = len(samples)
-    correction = 0.2
+    correction = 0.25
     while 1: # always run
         random.shuffle(samples)
         for offset in range(0, num_samples, batch_size):
@@ -56,7 +58,7 @@ def generator_multi_camera(samples, batch_size=32):
             angles = []
             for batch_sample in batch_samples:
                 center_angle = float(batch_sample[3])
-                flipped_center_angle = (center_angle) * -1.0
+                flipped_center_angle = -1.0 * (center_angle)
                 for i in range(3):
                     name = file_path+batch_sample[i].split('/')[-1]
                     image = cv2.imread(name)
@@ -68,10 +70,10 @@ def generator_multi_camera(samples, batch_size=32):
                         flipped_angle = flipped_center_angle
                     elif i == 1:
                         angle = center_angle + correction
-                        flipped_angle = flipped_center_angle + correction
+                        flipped_angle = flipped_center_angle -correction
                     else:
                         angle = center_angle - correction
-                        flipped_angle = flipped_center_angle - correction
+                        flipped_angle = flipped_center_angle + correction
                     angles.append(angle)
                     angles.append(flipped_angle)
 
@@ -108,7 +110,11 @@ model.add(Dense(100, activation='relu'))
 model.add(Dense(20, activation='relu'))
 model.add(Dense(1))
 model.compile(loss='mse', optimizer='adam')
-model.fit_generator(train_generator, samples_per_epoch=len(train_samples)*4, validation_data=validation_generator, nb_val_samples=len(validation_samples)*4, nb_epoch=6)
 
-# save model 
-model.save('model.h5')
+if 1: #0:only one camera; 1:three cameras
+    checkpointer = ModelCheckpoint(filepath='big_model_weights.hdf5', verbose=1, save_best_only=True)
+    model.fit_generator(train_generator, samples_per_epoch=len(train_samples)*6, validation_data=validation_generator, nb_val_samples=len(validation_samples)*6, nb_epoch=10, verbose=0, callbacks=[checkpointer])
+else:
+    checkpointer = ModelCheckpoint(filepath='small_model_weights.hdf5', verbose=1, save_best_only=True)
+    model.fit_generator(train_generator, samples_per_epoch=len(train_samples), validation_data=validation_generator, nb_val_samples=len(validation_samples), nb_epoch=5, verbose=0, callbacks=[checkpointer])
+

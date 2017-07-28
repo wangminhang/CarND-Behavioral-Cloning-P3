@@ -20,6 +20,9 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 
 [image1]: ./examples/Nvidia-Dave2.png "Model Visualization"
+[image2]: ./examples/big.png "before cropping"
+[image3]: ./examples/small.png "after cropping"
+
 
 ## Rubric Points
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
@@ -53,6 +56,8 @@ The model includes RELU layers to introduce nonlinearity, and the data is normal
 
 ####2. Attempts to reduce overfitting in the model
 
+Becaulse our dataset is much small than NVIDIA's, so in order to reduce overfitting, I use a less small model than NVIDIA's,use 3 convolutional layers as opposed to 5,and then modified the size of each layer to deel with our datas.
+
 The model contains max pooling layers in order to reduce overfitting. 
 
 The model was trained and validated on different data sets to ensure that the model was not overfitting. The model was tested by running it through the simulator and ensuring that the vehicle could stay on the center track.
@@ -72,7 +77,11 @@ Training data was chosen to keep the vehicle driving on the road, use a combinat
 My first step was to choose a convolution neural network model similar to the NVIDIA Dave2 architecture. I thought this model might be appropriate. The model construct is below:
 
 First I start a Sequential model and directly add a lambda layer to normalize the data for input shape of image size that is 160x320x3.
-Then I use a cropping layer to cut 75 pixels from top that is basically sky, tree, etc and to cut 25 pixels from bottom that is filled with car itself, and cut 20 pixels from left and right side each that is no use for train. The advantage is that increases training speed by decreasing the data size and clear the data we don't care about.
+Then I use a cropping layer to cut 75 pixels from top that is basically sky, tree, etc and to cut 25 pixels from bottom that is filled with car itself, and cut 20 pixels from left and right side each that is no use for train. The advantage is that increases training speed by decreasing the data size and clear the data we don't care about.And the steering angles are most at 0 degree,so need to use left and right camera and need more other angle's data.'
+
+befor and after cropping,the picture looks below:
+[image2]
+[image3]
 
 After these layers, the model has 3 convolutional layers with filter size of 3X3 that increases output depth to 16, 32 and 64 in each layer. All of these convolutional layers have Relu activation and also followed by maxpooling with size of 2x2. The maxpooling layers help keep the system away from overfitting. Then I have a flatten layer followed by 4 fully connected layers that decreases the depth from 400 to 100, from 100 to 20 and from 20 to 1 that is final output.
 
