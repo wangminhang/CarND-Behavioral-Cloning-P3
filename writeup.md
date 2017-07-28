@@ -20,8 +20,13 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 
 [image1]: ./examples/Nvidia-Dave2.png "Model Visualization"
-[image2]: ./examples/big.png "before cropping"
-[image3]: ./examples/small.png "after cropping"
+[image2]: ./examples/big.jpg "before cropping"
+[image3]: ./examples/small.jpg "after cropping"
+[image4]: ./examples/out1.jpg "wrong1"
+[image5]: ./examples/out2.jpg "wrong2"
+[image6]: ./examples/out3.jpg "wrong3"
+[image7]: ./examples/out4.jpg "recovery""
+
 
 
 ## Rubric Points
@@ -80,8 +85,7 @@ First I start a Sequential model and directly add a lambda layer to normalize th
 Then I use a cropping layer to cut 75 pixels from top that is basically sky, tree, etc and to cut 25 pixels from bottom that is filled with car itself, and cut 20 pixels from left and right side each that is no use for train. The advantage is that increases training speed by decreasing the data size and clear the data we don't care about.And the steering angles are most at 0 degree,so need to use left and right camera and need more other angle's data.'
 
 befor and after cropping,the picture looks below:
-[image2]
-[image3]
+![alt text][image2] ![alt text][image3]
 
 After these layers, the model has 3 convolutional layers with filter size of 3X3 that increases output depth to 16, 32 and 64 in each layer. All of these convolutional layers have Relu activation and also followed by maxpooling with size of 2x2. The maxpooling layers help keep the system away from overfitting. Then I have a flatten layer followed by 4 fully connected layers that decreases the depth from 400 to 100, from 100 to 20 and from 20 to 1 that is final output.
 
@@ -118,9 +122,13 @@ Here is a visualization of the architecture:
 
 ####3. Creation of the Training Set & Training Process
 
-To capture good driving behavior, I first recorded one laps on track one using center lane driving. 
+To capture good driving behavior, I first recorded one laps on track one using center lane driving. But the car can not drive well at some turning like below,and run into roadside.
+![alt text][image4]  ![alt text][image5]  ![alt text][image6]
 
-Then I recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to recover from error.
+
+Then I recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to recover from error,like below.
+![alt text][image7]
+
 
 Then I repeated this process on track two in order to get more data points.
 
